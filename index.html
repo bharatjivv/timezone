@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TimeZone API</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0d0d0d;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .wrapper {
+      width: 80%;
+      margin: 0 auto;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #333;
+      color: black;
+    }
+
+    h2, h3 {
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    .box {
+      border: 1px solid #999;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #f0f0f0;
+      min-height: 120px;
+    }
+
+    input {
+      width: 100%;
+      padding: 6px;
+      margin: 5px 0 10px 0;
+      border: 1px solid #666;
+      background-color: #f0f0f0;
+      color: black;
+      border-radius: 3px;
+    }
+
+    button {
+      padding: 6px 10px;
+      background-color: #000;
+      color: #fff;
+      border: 1px solid #666;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    button:hover {
+      background-color: #333;
+    }
+
+    .result-box {
+      border: 1px solid #999;
+      padding: 10px;
+      background-color: #f0f0f0;
+      margin-top: 10px;
+      min-height: 120px;
+    }
+
+    p {
+      margin: 4px 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h2>TimeZone API</h2>
+    <h3>Your Current Time Zone</h3>
+    <div class="box" id="currentTimezone">
+      <p>Fetching your current location...</p>
+    </div>
+
+    <h3>Enter Address</h3>
+    <input type="text" id="addressInput" placeholder="Enter your address">
+    <button id="submitBtn">Submit</button>
+
+    <h3>Your result</h3>
+    <div class="result-box" id="result">
+      <p>Enter an address and click submit.</p>
+    </div>
+  </div>
+
+  <script>
+    const apiKey = "API_KEY"; // 🔴 Replace this with your real API key
+
+    // Get timezone data from Geoapify API
+    async function getTimezone(lat, lon, targetElement) {
+      try {
+        targetElement.innerHTML = `<p>Fetching timezone data...</p>`;
+        const url = `https://api.geoapify.com/v1/timezone?lat=${lat}&lon=${lon}&apiKey=${apiKey}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Timezone API error");
+        const data = await response.json();
+
+        if (data.timezone) {
+          targetElement.innerHTML = `
+            <p><span class="label">Name Of Time Zone:</span> ${data.timezone.name}</p>
+            <p><span class="label">Lat:</span> ${lat.toFixed(4)} &nbsp;&nbsp;&nbsp; <span class="label">Long:</span> ${lon.toFixed(4)}</p>
+            <p><span class="label">Offset STD:</span> ${data.timezone.offset_STD}</p>
+            <p><span class="label">Offset STD Seconds:</span> ${data.timezone.offset_STD_seconds}</p>
+            <p><span class="label">Offset DST:</span> ${data.timezone.offset_DST}</p>
+            <p><span class="label">Offset DST Seconds:</span> ${data.timezone.offset_DST_seconds}</p>
+            <p><span class="label">Country:</span> ${data.timezone.country}</p>
+            <p><span class="label">Postcode:</span> ${data.timezone.postcode || "N/A"}</p>
+            <p><span class="label">City:</span> ${data.timezone.city || "N/A"}</p>
+          `;
+        } else {
+          targetElement.innerHTML = `<p>Timezone data not found.</p>`;
+        }
+      } catch (error) {
+        targetElement.innerHTML = `<p>Error fetching timezone: ${error.message}</p>`;
+      }
+    }
+
+    // Get user's current location and timezone
+    function getCurrentLocation() {
+      const currentBox = document.getElementById("currentTimezone");
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            getTimezone(latitude, longitude, currentBox);
+          },
+          (err) => {
+            currentBox.innerHTML = `<p>Location access denied or unavailable. (${err.message})</p>`;
+          }
+        );
+      } else {
+        currentBox.innerHTML = "<p>Geolocation not supported by your browser.</p>";
+      }
+    }
+
+    // Fetch timezone using address search
+    async function getTimezoneByAddress(address) {
+      const resultBox = document.getElementById("result");
+      resultBox.innerHTML = `<p>Searching for location...</p>`;
+
+      try {
+        const geoUrl = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(address)}&apiKey=${apiKey}`;
+        const res = await fetch(geoUrl);
+        if (!res.ok) throw new Error("Geocoding API error");
+        const data = await res.json();
+
+        if (data.features && data.features.length > 0) {
+          const { lat, lon } = data.features[0].properties;
+          getTimezone(lat, lon, resultBox);
+        } else {
+          resultBox.innerHTML = "<p>Address not found. Please enter a valid address.</p>";
+        }
+      } catch (error) {
+        resultBox.innerHTML = `<p>Error fetching location: ${error.message}</p>`;
+      }
+    }
+
+    // Button click event
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const address = document.getElementById("addressInput").value.trim();
+      if (address) {
+        getTimezoneByAddress(address);
+      } else {
+        alert("Please enter an address.");
+      }
+    });
+
+    // Initialize
+    getCurrentLocation();
+  </script>
+</body>
+</html>
