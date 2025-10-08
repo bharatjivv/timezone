@@ -109,7 +109,7 @@
   </div>
 
   <script>
-    const apiKey = "API_KEY"; // 🔴 Replace this with your real API key
+    const apiKey = process.env.API_KEY; // 🔴 Replace this with your real API key
 
     // Get timezone data from Geoapify API
     async function getTimezone(lat, lon, targetElement) {
