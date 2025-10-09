@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+/* Utility class */
+.container{
+    padding: 20px;
+}
+
+body{
+    font-family: "Inter", sans-serif;
+}
+
+/* Css for section 1 and section 2 */
+.heading1, .heading2{
+    font-size: 60px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.heading2, .normal_text2{
+    color: white;
+}
+
+.user_address{
+    background-color: black;
+}
+
+.longi_latitu{
+    display: flex;
+    height: 70px;
+}
+
+.lat{
+    width: 50%;
+}
+
+.main_box1{
+    border: 1px solid black;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.main_box2{
+    border: 1px solid white;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 25px;
+    display: none;
+}
+
+.normal_text2, .normal_text1{
+    font-size: 30px;
+    font-weight: 400;
+}
+
+input{
+    margin: 20px 0px 20px 0px;
+    width: 100%;
+    height: 72px;
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 20px;
+    border: 1px solid white;
+}
+
+button{
+    width: 20%;
+    height: 58px;
+    margin-bottom: 30px;
+}
+
+.error_text{
+    font-size: 16px;
+    font-weight: 700;
+    color: #E84444;
+    margin-bottom: 30px;
+    display: none;
+}
+
+@media screen and (max-width: 920px) {
+    .heading1, .heading2{
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .normal_text2, .normal_text1{
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    .longi_latitu{
+        display: flex;
+        height: 30px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .heading1, .heading2{
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .normal_text2, .normal_text1{
+        font-size: 16px;
+        font-weight: 400;
+    }
+}
+
+@media screen and (max-width: 426px) {
+    input{
+        height: 52px;
+    }
+    
+    button{
+        margin-bottom: 30px;
+        width: 40%;
+        height: 38px;
+    }
+
+    .longi_latitu{
+        flex-direction: column;
+        gap: 25px;
+        height: 76px;
+    }
+}
+
+@media screen and (max-width: 405px) {
+    .longi_latitu{
+        height: 95px;
+    }
+}
